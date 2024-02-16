@@ -1,0 +1,136 @@
+-- AULA 01- 08/02/2024****************************************************************************************
+drop database livraria;
+Create schema if not exists livraria default character set utf8;
+Use livraria;
+Show databases;
+
+Create table if not exists livro( 
+    Titulo varchar(255) ,
+	Preco double
+) engine= MyISAM;
+Show tables;
+
+Alter table livro add páginas integer;       -- adicionando paginas 
+Alter table livro drop column páginas;       -- apagar coluna 
+
+Insert into livro values ('Java', 98.75),
+('Cobol', 100.99),
+('Delphi', 50.67),
+('Angular', 110.78);
+Select*from livro;
+
+Set SQL_SAFE_UPDATES= 0;
+Update livro set 
+Preco = 115.9 where titulo= 'Java';
+
+-- AULA 02- 15/02/2024********************************************************************************************
+
+CREATE SCHEMA IF NOT EXISTS livraria2 DEFAULT
+CHARACTER SET utf8; 
+use livraria2;
+
+create table if not exists aluno ( 
+id integer not null, 
+nome varchar (255) not null, 
+email varchar (255) not null, 
+telefone varchar (14), 
+altura decimal (3,2), 
+primary key (id)
+)engine = InnoDB;
+
+select nome, email from aluno;
+select*from aluno;
+insert into aluno values (1,'João', 'joao@gmail.com', '(61)98765-4321', 1.74),
+(2, 'Jose', 'jose@gmail.com', '(61)98765-4302', 1.74),
+(3, 'Silva', 'silva@gmail.com', '(61)98765-4303', 1.94),
+(4, 'Brito', 'brito@gmail.com', '(61)98765-4304', 1.94),
+(5, 'Ana','ana@gmail.com', '(61)98765-4305', 1.74);
+
+delete from aluno where
+id between 1 and 5;                  -- apagar ********
+truncate table aluno;                -- limpar tabela**
+drop table aluno;
+create table if not exists aluno ( 
+id integer not null auto_increment,  -- preencher automaticamente
+nome varchar (255) not null,
+email varchar (255) not null,
+telefone varchar (14), 
+altura decimal (3,2), 
+primary key (id)
+)engine = InnoDB;
+
+insert into aluno values (null, 'João', 'joao@gmail.com', '(61)98765-4321', 1.74), 
+(null, 'Jose', 'jose@gmail.com', '(61)98765-4302', 1.74),
+(null, 'Silva', 'silva@gmail.com', '(61)98765-4303', 1.94),
+(null, 'Brito', 'brito@gmail.com', '(61)98765-4304', 1.94),
+(null, 'Ana', 'ana@gmail.com', '(61)98765-4305', 1.74);
+
+create table if not exists professor(
+id integer not null auto_increment, 
+nome varchar(255) not null, 
+email varchar (255) not null, telefone varchar (14), 
+altura decimal (3,2),
+primary key (id)
+) engine = InnoDB;
+
+insert into professor
+values (null, 'Maria Souza', 'marisouza@gmail.com', '(61)91111-4321' , 1.62), 
+(null, 'Assis','assis@gmail.com', '(61)92222-4302', 1.70);
+
+select*from professor;
+truncate table professor;               -- deletar duplicado 
+
+select a.nome as aluno_nome, p.nome as professor_nome from aluno as a, professor as p;
+select*from aluno where altura > 1.80; 
+select*from aluno where nome like 'João%'; 
+select*from aluno where nome like 'Jose%'; 
+select*from aluno order by altura;
+select*from aluno order by altura, nome;
+select*from aluno order by altura desc, nome asc; 
+
+
+CREATE SCHEMA IF NOT EXISTS redesocial DEFAULT CHARACTER SET utf8; 
+use redesocial ;
+
+create table if not exists usuario (
+id int not null, 
+nome_usuario varchar (255) not null, 
+senha varchar (10), 
+email varchar (100), 
+primary key (id)
+)engine = InnoDB;
+
+create table if not exists perfil(
+id int not null, 
+nome varchar (255), 
+sexo tinyint(1),
+profissao varchar (255),
+onde_estudou varchar (255), 
+hobbies varchar (255), 
+gosto_musical varchar (255), 
+primary key (id),
+foreign key (id) references usuario (id)
+) engine = InnoDB;
+
+insert into usuario values (1, 'João Paulo', 123456, 'jpaulo@gmail.com'), 
+(2, 'Márcia', 123456, 'marcia@gmail.com'), 
+(3, 'José Marcos', 123456, 'josem@gmail.com');
+
+select*from usuario;
+insert into perfil values (1, 'João Paulo',0, 'professor', 'UNB', 'Correr', 'Rock'),
+(2, 'Márcia', 1 ,'aluno', 'Projeção', 'Andar', 'Axé'),
+(3, 'José Marcos', 0 , 'professor', 'UNB', 'Correr', 'Sentaneia');
+
+Select*from usuario as u 
+Join perfil as p;
+Select*from usuario as u 
+Join perfil as p
+On u.id = p.id;
+
+-- Qual seria a query para obter o seguinte resultado retirando os campos repetidos id e nome???
+
+Select u.id, u.nome_usuario, u.senha, u.email, p.sexo, p.profissao, 
+p.onde_estudou, p.hobbies, p.gosto_musical
+From usuario as u 
+Inner join perfil as p 
+On u.id = p.id;
