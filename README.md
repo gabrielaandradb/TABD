@@ -1,0 +1,205 @@
+-- AULA 03-22/02/2024 
+
+create schema if not exists ExercicioAula2 default character set utf8;
+use ExercicioAula2;
+create table if not exists estudantes(
+nome varchar(255),
+email varchar (255),
+telefone varchar(255),
+altura decimal (3,2),
+aprovado tinyint (1)
+)engine= InnoDB;
+
+insert into estudantes values ('João Paulo', 'joao@gmail.com', '9988-7700', 1.68,1),
+('José Marcos', 'jose@gmail.com', '9988-7711', 1.88,0),
+('Luiz', 'luiz@gmail.com', '9988-7722', 1.98,1),
+('Maria Tereza', 'mariat@gmail.com', '9988-7733', 1.48,0),
+('Eduarda', 'eduarda@gmail.com', '9988-7744', 1.58,0);
+
+select*from estudantes;
+
+select avg(altura) from estudantes where aprovado =0;
+select count(altura) from estudantes where altura>=1.70;
+select sum(altura) from estudantes;
+select sum(altura) from estudantes where aprovado=1;
+select max(altura) from estudantes;
+select min(altura) from estudantes;
+
+create schema if not exists subconsultas default character set utf8;
+use subconsultas;
+
+create table if not exists aluno(
+id integer not null,
+nome varchar(255) not null,
+email varchar (100)not null,
+dataNascimento datetime,
+primary key (id)
+)engine= InnoDB;
+
+select*from aluno;
+
+create table if not exists turma(
+id integer not null,
+inicio datetime,
+fim datetime,
+observacoes longtext,
+primary key (id)
+)engine= InnoDB;
+
+select*from turma;
+
+create table if not exists AlunoTurma(
+aluno_id integer not null,
+turma_id integer not null,
+primary key (aluno_id, turma_id),
+foreign key (aluno_id) references aluno (id),
+foreign key (turma_id) references turma (id)
+)engine= InnoDB;
+
+select*from AlunoTurma;
+
+insert into aluno values (1, 'João Paulo', 'joao@gmail.com','1978-02-19'),
+(2, 'José Paulo', 'josep@gmail.com','1988-07-12'),
+(3, 'Anibal da Silva', 'anibalsilva@gmail.com','1968-12-14'),
+(4, 'Maria Rosa', 'mariar@gmail.com','1978-09-09');
+
+insert into turma values (1, '2019-03-01', '2019-07-15','Turma Banco de Dados 1'),
+(2, '2019-04-01', '2019-07-22','Turma Banco de Dados 2');
+
+insert into AlunoTurma values (1,1),
+(2,1),
+(3,2);
+
+create table if not exists nota(
+id int not null,
+aluno_id int,
+turma_id int,
+nota decimal,
+primary key (id),
+foreign key (aluno_id) references aluno (id),
+foreign key (turma_id) references turma (id)
+)engine= InnoDB;
+
+select*from nota;
+
+insert into nota values (1,1,1,10),
+(2,2,2,8),
+(3,3,2,9),
+(4,4,1,5);
+
+ select*from nota as n1        -- mostrar maior nota de cada turma 
+ where n1.nota> (
+ select avg (n2.nota)
+ from nota as n2
+ where n2.turma_id =n1.turma_id);
+ 
+ select n1.*, (
+ select max(n2.nota)
+ from nota as n2
+ where n2.turma_id=1 
+ ) as maior_nota
+ from nota as n1
+ where n1.turma_id;
+ 
+ select n1.*,(
+ select max(n2.nota)
+ from nota as n2
+ where n2.turma_id=1
+ ) as maior_nota
+from nota as n1
+where n1.turma_id= 1 or n1.turma_id=2;
+
+drop database ExercicioAula3;
+create schema if not exists ExercicioAula3 default character set utf8;
+use ExercicioAula3;
+
+create table if not exists projetos(
+	id int not null,
+    titulo varchar (45) not null,
+    data date not null,
+    url varchar (100) not null,
+    primary key(id)
+)engine= InnoDB;
+
+create table if not exists usuario(
+	id int not null,
+    nome varchar (45) not null,
+    email varchar (45) not null,
+    senha varchar(45) not null,
+    primary key(id)
+)engine= InnoDB;
+
+create table if not exists comentario(
+	id int not null,
+    comentario text not null,
+	data date not null,
+    id_usuario int,
+    id_projeto int,
+    primary key(id),
+    foreign key(id_usuario) references usuario (id),
+    foreign key(id_projeto) references projetos (id)
+)engine= InnoDB;
+
+create table if not exists likes_por_projeto(
+	id_projeto int not null,
+    id_usuario int not null,
+    primary key(id_projeto,id_usuario),
+    foreign key(id_projeto) references projetos (id),
+    foreign key(id_usuario) references usuario (id)
+)engine= InnoDB;
+
+create table if not exists likes_por_comentario(
+	id_usuario  int not null,
+    id_comentario int not null,
+    primary key(id_comentario,id_usuario),
+    foreign key(id_usuario) references usuario (id),
+    foreign key(id_comentario) references comentario (id)    
+)engine= InnoDB;
+
+insert into projetos values (1,'Aplicação C#', '2018-04-01', 'www.aplicacaopcsharp.com.br'),
+(2,'Aplicação Ionic', '2018-05-07', 'www.aplicacaoionic.com.br'),
+(3,'Aplicação Python', '2018-08-05', 'www.aplicacaopython.com.br');
+select*from projetos;
+
+insert into usuario values (1, 'Bruna Luiza', 'bruninha@gmaul.com', 'abc123'),
+(2, 'Thiago Braga', 'thiagobraga@gmaul.com', 'pena093'),
+(3, 'Osvaldo Justino', 'osvaltino@gmaul.com', 'osv123'),
+(4, 'Gabriel Fernando', 'gabrielfer@gmaul.com', 'gabss34');
+select*from usuario;
+
+insert into comentario values (1, 'A microsoft acertou com essa linguagem', '2018-05-01',1,1),
+(2, 'Parabéns pelo projeto, bem legal!', '2018-12-01',3,1),
+(3, 'Super interessante! Fácil e rápido!', '2018-08-09',4,2),
+(4, 'Cara, que simples fazer um APP assim!', '2018-01-01',1,2),
+(5, 'Liguagem muito diferente', '2018-11-01',3,3),
+(6, 'Adorei aprender Python! Parabéns!', '2019-05-01',2,3),
+(7, 'Muito maneiro esse framework!', '2018-04-05',2,2);
+select*from comentario;
+
+insert into likes_por_projeto values (1,1),
+(1,3),
+(2,1),
+(2,2),
+(2,3),
+(2,4),
+(3,2);
+select*from likes_por_projeto;
+
+insert into likes_por_comentario values (1,7),
+(2,7),
+(4,7);
+select*from likes_por_comentario;
+
+select P.titulo,
+	(select count(C.id_projeto)
+    from comentario C
+    where C.id_projeto = P.id) as Quantidade_Comentarios
+    from projetos P
+    group by P.id;
+    
+  select P.titulo, L.titulo,
+	(select count(C.id_projeto)
+    from comentario C
+    where C.id_projeto = P.id) as Quantidade_Comentarios
+    from projetos P
+    group by P.id;
