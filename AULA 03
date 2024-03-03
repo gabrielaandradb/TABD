@@ -197,9 +197,30 @@ select P.titulo,
     from projetos P
     group by P.id;
     
-  select P.titulo, L.titulo,
+  select P.titulo, L.titulo,                      -- RESPOSTA QUERY 1
 	(select count(C.id_projeto)
     from comentario C
     where C.id_projeto = P.id) as Quantidade_Comentarios
     from projetos P
     group by P.id;
+
+  select P.titulo,                                -- RESPOSTA QUERY 2
+(select count(C.id_projeto)
+from comentario C
+where C.id_projeto  = P.id) as Quantidade_Comentarios
+(select count (LP.id_projeto)
+from likes_por_projeto LP
+where LP.id_projeto = P.id) as Quantidade_Likes
+from projetos P
+group by P.id;
+
+-- trazer na consulta somente id, titulo e data - RESPOSTA QUERY 3
+  select P.id,	
+P.titulo,
+P.data
+from projetos P
+where P.id in 
+(select C.id_projeto
+from comentario C
+where P.id = C.id_projeto);
+
