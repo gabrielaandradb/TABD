@@ -36,8 +36,6 @@ dataNascimento datetime,
 primary key (id)
 )engine= InnoDB;
 
-select*from aluno;
-
 create table if not exists turma(
 id integer not null,
 inicio datetime,
@@ -45,8 +43,6 @@ fim datetime,
 observacoes longtext,
 primary key (id)
 )engine= InnoDB;
-
-select*from turma;
 
 create table if not exists AlunoTurma(
 aluno_id integer not null,
@@ -56,19 +52,20 @@ foreign key (aluno_id) references aluno (id),
 foreign key (turma_id) references turma (id)
 )engine= InnoDB;
 
-select*from AlunoTurma;
-
 insert into aluno values (1, 'João Paulo', 'joao@gmail.com','1978-02-19'),
 (2, 'José Paulo', 'josep@gmail.com','1988-07-12'),
 (3, 'Anibal da Silva', 'anibalsilva@gmail.com','1968-12-14'),
 (4, 'Maria Rosa', 'mariar@gmail.com','1978-09-09');
+select*from aluno;
 
 insert into turma values (1, '2019-03-01', '2019-07-15','Turma Banco de Dados 1'),
 (2, '2019-04-01', '2019-07-22','Turma Banco de Dados 2');
+select*from turma;
 
 insert into AlunoTurma values (1,1),
 (2,1),
 (3,2);
+select*from AlunoTurma;
 
 create table if not exists nota(
 id int not null,
@@ -80,12 +77,11 @@ foreign key (aluno_id) references aluno (id),
 foreign key (turma_id) references turma (id)
 )engine= InnoDB;
 
-select*from nota;
-
 insert into nota values (1,1,1,10),
 (2,2,2,8),
 (3,3,2,9),
 (4,4,1,5);
+select*from nota;
 
  select*from nota as n1        -- mostrar maior nota de cada turma 
  where n1.nota> (
@@ -109,8 +105,8 @@ insert into nota values (1,1,1,10),
 from nota as n1
 where n1.turma_id= 1 or n1.turma_id=2;
 
-drop database ExercicioAula3;
-create schema if not exists ExercicioAula3 default character set utf8;
+
+create schema if not exists ExercicioAula3 default character set utf8; *********************************************************************
 use ExercicioAula3;
 
 create table if not exists projetos(
@@ -190,25 +186,20 @@ insert into likes_por_comentario values (1,7),
 (4,7);
 select*from likes_por_comentario;
 
-select P.titulo,
-	(select count(C.id_projeto)
-    from comentario C
-    where C.id_projeto = P.id) as Quantidade_Comentarios
-    from projetos P
-    group by P.id;
-    
-  select P.titulo, L.titulo,                      -- RESPOSTA QUERY 1
+
+select P.titulo,                                    -- RESPOSTA QUERY 1
 	(select count(C.id_projeto)
     from comentario C
     where C.id_projeto = P.id) as Quantidade_Comentarios
     from projetos P
     group by P.id;
 
-  select P.titulo,                                -- RESPOSTA QUERY 2
+-- mostrar também o valor total de likes recebidos por projeto  -- RESPOSTA QUERY 2
+  select P.titulo,                            
 (select count(C.id_projeto)
 from comentario C
-where C.id_projeto  = P.id) as Quantidade_Comentarios
-(select count (LP.id_projeto)
+where C.id_projeto  = P.id) as Quantidade_Comentarios,
+(select count(LP.id_projeto)
 from likes_por_projeto LP
 where LP.id_projeto = P.id) as Quantidade_Likes
 from projetos P
