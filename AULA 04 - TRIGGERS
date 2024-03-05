@@ -1,4 +1,4 @@
-drop database bd_aula_triggers; 
+drop database bd_aula_triggers;
 create schema if not exists bd_aula_triggers default character set utf8; 
 use bd_aula_triggers;
 
@@ -25,11 +25,55 @@ primary key (cod)
 
 insert into curso values (null, "Ciências da Computação"), 
 (null, "Tecnologia em Análise e Desenvolvimento de Sistemas"), 
-(null, "Engenharia da Computação"), (null, "Sistemas de Informação"); 
+(null, "Engenharia da Computação"), 
+(null, "Sistemas de Informação"); 
 select*from curso;
 
 SET DELIMITER $$
-
-CREATE TRIGGER tg_matricula after insert on aluno for each row begin 
+CREATE TRIGGER tg_matricula 
+after insert on aluno 
+for each row begin 
 insert into matricula values (null, new.cod, new.curso); 
-end;.
+end;
+
+set delimiter ;    -- ESPAÇO OBRIGATÓRIO ANTES DO ;
+
+
+insert into aluno values (null, "João Paulo Pimentel", 2,1 );
+
+select*from aluno;
+select*from matricula;
+select*from curso;
+
+insert into aluno values (null, "José da Silva",4,1);
+
+show triggers; 
+drop trigger tg_matricula;
+
+create table if not exists aluno_auditoria( 
+int int not null auto_increment, 
+cod int not null,
+nome varchar (100) not null, 
+modificado_em datetime default null,
+acao varchar (50) default null,
+primary key (id)
+)engine= InnoDB;
+
+delimiter $$                                  
+create trigger antesDeUpdate_alunos
+before update on aluno
+for each row
+begin
+insert into aluno_auditoria
+set acao = 'update',
+cod= old.cod,
+nome= old.nome,
+modificado_em = now();
+end $$
+delimiter ;
+
+show triggers;
+update aluno set nome= "João Pimentel" where cod=1;
+update aluno set nome= "João Marcos" where cod=2;
+select*from aluno;
+select*from aluno_auditoria;
