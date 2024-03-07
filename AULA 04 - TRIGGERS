@@ -1,3 +1,5 @@
+-- AULA 04 - 29/02/2024
+
 drop database bd_aula_triggers;
 create schema if not exists bd_aula_triggers default character set utf8; 
 use bd_aula_triggers;
