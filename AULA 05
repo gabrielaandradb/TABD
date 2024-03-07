@@ -1,0 +1,65 @@
+drop database bd_aula_procedures;
+create schema if not exists bd_aula_procedures default character set utf8; 
+use bd_aula_procedures;
+
+create table if not exists pais( 
+id_pais int not null auto_increment, 
+nome_pais varchar (200) not null, 
+primary key (id_pais)
+);
+
+insert into pais values (null, "Brasil"),
+(null, "Chile"),
+(null, "Argentina"),
+(null, "Bolívia"),
+(null, "Uruguai");
+
+delimiter $$
+drop procedure if exists listar_paises $$
+create procedure listar_paises (in id int)
+begin
+	if (id is null) then
+		select*from pais;
+    else
+		select*from pais where id_pais =id;
+    end if;    
+end$$
+delimiter ; 
+
+call listar_paises(null); -- trazer registros da tabela
+call listar_paises(1);    -- registro com id=1
+
+delimiter $$
+drop procedure if exists verificar_quantidade_pais $$
+create procedure verificar_quantidade_pais (out quantidade int)
+begin
+
+		select count(*) into quantidade from pais;
+end$$
+delimiter ; 
+
+call verificar_quantidade_pais (@total);
+select @total;
+
+delimiter $$
+drop procedure if exists selecionar_paises $$
+create procedure selecionar_paises (in quantidade int)
+begin
+	    select*from pais
+        limit quantidade;
+end$$
+delimiter ; 
+
+call selecionar_paises(3);
+call selecionar_paises(4);
+
+delimiter $$
+drop procedure if exists selecionar_paises_iniciado_com $$
+create procedure selecionar_paises_iniciado_com (in quantidade int)
+begin
+	    select*from pais where nome_pais
+        like concat('B%');
+end$$
+delimiter ;
+
+call selecionar_paises_iniciado_com('B');
