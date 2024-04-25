@@ -1,0 +1,69 @@
+select @@autocommit; 
+commit;
+show variables like '%isolation%';
+
+create schema if not exists aula_pratica;
+use aula_pratica;
+
+create table if not exists tb_titulacao(
+	id int not null auto_increment,
+    descricao varchar (50) null,
+    primary key (id)
+    ) engine = InnoDB;
+    
+create table if not exists tb_instrutor (
+		id int not null auto_increment,
+        rg varchar (20) null,
+        nome varchar (100) null,
+        data_nascimento date null,
+        titulacao_id int not null, 
+        primary key (id),
+		index fk_tb_instrutor_tb_titulacao1_idx (titulacao_id asc),
+        unique index rg_UNIQUE (rg asc),
+        constraint fk_tb_instrutor_tb_titulacao1
+			foreign key (titulacao_id)
+            references aula_pratica.tb_titulacao (id)
+            on delete no action 
+            on update no action)
+engine= InnoDB;            
+         
+create table if not exists tb_telefone_instrutor (
+		id int not null auto_increment,
+        numero varchar (15) null,
+        tipo varchar (45) null,
+        instrutor_id int not null, 
+        primary key (id),
+		index fk_tb_telefone_instrutor_tb_instrutor_idx (instrutor_id asc),
+        constraint fk_tb_telefone_instrutor_tb_instrutor
+			foreign key (instrutor_id)
+            references aula_pratica.tb_instrutor (id)
+            on delete no action 
+            on update no action)
+engine= InnoDB;                     
+         
+insert into tb_titulacao (descricao)values ('Graduado'),
+('Especialista'),
+('Mestrado'),
+('Doutorado');
+select*from tb_titulacao;
+
+insert into tb_instrutor (rg, nome ,data_nascimento, titulacao_id)
+values ('1234567','Instrutor Um de Araújo','1990-10-15',2),
+('1234569','Instrutor Um de Araújo','1997-08-12',1),
+('1122334','Instrutor Dois da Silva','1990-07-02',3),
+('9988774','Instrutor Três de Araújo','1989-06-23',3),
+('5566998','Instrutor Quatro Atilano','1992-06-28',3),
+('6655334','Instrutor Cinco Souza','1992-05-28',2),
+('7778892','Instrutor Seis Reis','1993-04-30',1),
+('1593628','Instrutor Sete Cardoso','1976-04-30',4);
+select*from tb_instrutor;
+         
+insert into tb_telefone_instrutor (numero, tipo, instrutor_id)
+values ('55663399','Celular',1),         
+('55663399','Fixo',2), 
+('99443301','Celular',3), 
+('56633001','Celular',4), 
+('55882277','Celular',5), 
+('11998866','Fixo',6), 
+('88993355','Celular',7);          
+select*from tb_telefone_instrutor;         
