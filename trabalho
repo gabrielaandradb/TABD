@@ -1,0 +1,108 @@
+drop database gerenciamento;
+create schema if not exists gerenciamento default character set utf8;
+use gerenciamento;
+
+CREATE TABLE IF NOT EXISTS aluno (
+    cpf varchar (45),
+    nome VARCHAR(45) NULL,
+    DataNascimento varchar (10),
+    DataMatricula varchar (10),
+    PRIMARY KEY (cpf, nome)
+)  ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS disciplina (
+    CodigoDisci VARCHAR(10) NOT NULL,
+    nome_disci VARCHAR(45) ,
+    CodigoCurso varchar (10),
+    primary key (CodigoDisci, nome_disci)
+)  ENGINE=INNODB;
+
+CREATE TABLE IF NOT EXISTS matricula (
+    cpf VARCHAR(11) NOT NULL,
+    DataMatricula VARCHAR(20) NOT NULL,
+    PRIMARY KEY (DataMatricula),
+    FOREIGN KEY (cpf)
+        REFERENCES aluno (cpf)
+)  ENGINE=INNODB;
+
+create table if not exists professor ( 
+matricula varchar (10) not null, 
+nome varchar (45) not null, 
+CodigoDisci varchar (10) not null,
+DataContratacao varchar (10), 
+nome_disci varchar (45),
+primary key (matricula),
+foreign key (CodigoDisci) references disciplina (CodigoDisci)
+) engine = InnoDB;
+
+create table if not exists turma (
+id int not null,
+horas time,
+nome varchar (45),
+CodigoDisci varchar (45),
+matricula_professor varchar (11),
+primary key (id,nome),
+foreign key (matricula_professor) references professor(matricula),
+foreign key (CodigoDisci) references disciplina(CodigoDisci)
+) engine = InnoDB; 
+
+insert into aluno values ('00000000000','Aline','05-02-1990',202300001);
+insert into aluno values ('11111111111','Maria','10-06-1995',202311112);
+insert into aluno values ('22222222222','Felipe','23-12-2001',202322223);
+insert into aluno values ('33333333333','Eduardo','11-08-2000',20233334);
+insert into aluno values ('44444444444','Gabriela','22-02-2005',202344445);
+insert into aluno values ('55555555555','Regina','30-02-2011',202355556);
+insert into aluno values ('66666666666','Caio','05-05-2000',202366667);
+insert into aluno values ('77777777777','Rebeca','14-05-1993',202377778);
+insert into aluno values ('88888888888','Heitor','14-12-2002',202388889);
+insert into aluno values ('99999999999','Julia','20-09-2000',202399990);
+select * from aluno;
+
+insert into disciplina values ('001','Microbiologia',null);
+insert into disciplina values ('002','Química',null);
+insert into disciplina values ('003','Anatomia',null);
+insert into disciplina values ('004','Histologia',null);
+insert into disciplina values ('005','Imunologia',null);
+select * from disciplina;
+
+insert into matricula values ('00000000000','202300009');
+insert into matricula values ('11111111111','202311118');
+insert into matricula values ('22222222222','202322227');
+insert into matricula values ('33333333333','202333336');
+insert into matricula values ('444444444444','202344445');
+insert into matricula values ('55555555555','202355556');
+insert into matricula values ('66666666666','202366667');
+insert into matricula values ('77777777777','202377778');
+insert into matricula values ('88888888888','202388889');
+insert into matricula values ('99999999999','202399990');
+select * from matricula;
+
+insert into professor values ('12345','Carlos','001','03-08-2007','Microbiologia');
+insert into professor values ('67890','Rosane','002','07-06-2010','Química');
+insert into professor values ('11453','José','003','17-08-2015','Anatomia');
+insert into professor values ('23049','Marta','004','14-03-2020','Histologia');
+insert into professor values ('35678','Paulo','005','20-04-2013','Imunologia');
+select * from professor;
+
+insert into turma values (1,'80:00:00','Aline','001','11453');
+insert into turma values (2,'80:00:00','Maria','002','12345');
+insert into turma values (3,'70:00:00','Felipe','003','23049');
+insert into turma values (4,'70:00:00','Eduardo','004','35678');
+insert into turma values (5,'70:00:00','Gabriela','005','67890');
+insert into turma values (6,'80:00:00','Regina','001','11453');
+insert into turma values (7,'80:00:00','Caio','002','12345');
+insert into turma values (8,'70:00:00','Rebeca','003','23049');
+insert into turma values (9,'70:00:00','Heitor','004','35678');
+insert into turma values (10,'70:00:00','Julia','005','23049');
+select *from turma;
+
+select aluno.cpf as Cpf, aluno.nome as 'Nome do Aluno',  professor.nome_disci as 'Disciplina'
+from aluno 
+left join professor 
+on aluno.nome = professor.nome_disci;
+
+select aluno.cpf as Cpf, aluno.DataMatricula as Matricula, aluno.nome as 'Nome do Aluno',  
+professor.nome_disci as 'Disciplina', professor. nome as 'Nome do Professor'
+from aluno
+right join professor
+on aluno.nome = professor.nome_disci;
