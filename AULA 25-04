@@ -66,4 +66,13 @@ values ('55663399','Celular',1),
 ('55882277','Celular',5), 
 ('11998866','Fixo',6), 
 ('88993355','Celular',7);          
-select*from tb_telefone_instrutor;         
+select*from tb_telefone_instrutor;      
+
+select tb_instrutor.id, tb_instrutor.nome, tb_titulacao.descricao
+         as titulação, tb_telefone_instrutor.numero as telefone
+         from tb_instrutor
+         inner join tb_titulacao
+         on tb_titulacao.id = tb_instrutor.titulacao.id
+         inner join tb_telefone_instrutor
+         on tb_telefone_instrutor.instrutor_id = tb_istrutor.id
+         order by tb_instrutor.id;
