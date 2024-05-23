@@ -114,3 +114,25 @@ for each row begin
 	insert into matricula values (null, new.DataMatricula);
     end;
 show triggers;    
+
+DELIMITER $$
+
+CREATE TRIGGER cadastrar_aluno_turma
+AFTER INSERT ON matricula
+FOR EACH ROW
+BEGIN
+    DECLARE professor_nome VARCHAR(45);
+    DECLARE codigo_disciplina VARCHAR(10);
+    
+    -- Obtendo o nome do professor e o código da disciplina do aluno matriculado
+    SELECT p.nome, d.CodigoDisci INTO professor_nome, codigo_disciplina
+    FROM professor p
+    JOIN disciplina d ON NEW.CodigoDisci = d.CodigoDisci;
+    
+    -- Inserindo o aluno na turma associada à disciplina e professor
+    INSERT INTO turma (id, horas, nome, CodigoDisci, matricula_professor)
+    VALUES (NEW.cpf, '00:00:00', NEW.nome, codigo_disciplina, NEW.cpf);
+END$$
+
+DELIMITER ;
+
