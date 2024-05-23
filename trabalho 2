@@ -72,3 +72,14 @@ insert into turma values (8,'70:00:00','Rebeca','003','23049');
 insert into turma values (9,'70:00:00','Heitor','004','35678');
 insert into turma values (10,'70:00:00','Julia','005','23049');
 select *from turma;
+
+set delimiter $$
+
+CREATE TRIGGER atualizar_contratacao
+BEFORE INSERT ON professor
+FOR EACH ROW
+BEGIN
+    SET NEW.DataContratacao = CURDATE();
+END $$
+
+SET DELIMITER ;
