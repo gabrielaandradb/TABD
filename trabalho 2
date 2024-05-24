@@ -1,5 +1,5 @@
-create schema if not exists gerenciamento default character set utf8;
-use gerenciamento;
+create schema if not exists instituicao default character set utf8;
+use instituicao;
 
 CREATE TABLE IF NOT EXISTS aluno (
     cod int not null auto_increment,
@@ -7,35 +7,37 @@ CREATE TABLE IF NOT EXISTS aluno (
     DataNascimento varchar (10),
     PRIMARY KEY (cod)
 )  ENGINE=INNODB;
-insert into aluno values (null,'Aline','05-02-1990');
-insert into aluno values (null,'Maria','10-06-1995');
-insert into aluno values (null,'Felipe','23-12-2001');
-insert into aluno values (null,'Eduardo','11-08-2000');
-insert into aluno values (null,'Gabriela','22-02-2005');
-insert into aluno values (null,'Regina','30-02-2011');
-insert into aluno values (null,'Caio','05-05-2000');
-insert into aluno values (null,'Rebeca','14-05-1993');
-insert into aluno values (null,'Heitor','14-12-2002');
-insert into aluno values (null,'Julia','20-09-2000');
+insert into aluno (nome, DataNascimento) values
+('Aline', '05-02-1990'),
+('Maria', '10-06-1995'),
+('Felipe', '23-12-2001'),
+('Eduardo', '11-08-2000'),
+('Gabriela', '22-02-2005'),
+('Regina', '30-02-2011'),
+('Caio', '05-05-2000'),
+('Rebeca', '14-05-1993'),
+('Heitor', '14-12-2002'),
+('Julia', '20-09-2000');
 select * from aluno;
 
 CREATE TABLE IF NOT EXISTS disciplina (
-    CodigoDisci int NOT NULL auto_increment,
+    CodigoDisci int NOT NULL,
     nome_disci VARCHAR(45) ,
     primary key (CodigoDisci)
 )  ENGINE=INNODB;
-insert into disciplina values (null,'Microbiologia');
-insert into disciplina values (null,'Química');
-insert into disciplina values (null, 'Anatomia');
-insert into disciplina values (null,'Histologia');
-insert into disciplina values (null,'Imunologia');
-select * from disciplina;
 
+insert into disciplina (CodigoDisci, nome_disci) values
+('001','Microbiologia'),
+('002','Química'),
+('003','Anatomia'),
+('004','Histologia'),
+('005','Imunologia');
+select * from disciplina;
 
 create table if not exists professor ( 
 codProfessor int not null auto_increment, 
 nome varchar (45) not null, 
-CodigoDisci varchar (10) not null,
+CodigoDisci int not null,
 DataContratacao varchar (10), 
 nome_disci varchar (45),
 primary key (codProfessor),
@@ -56,21 +58,19 @@ nome varchar (45),
 CodigoDisci int not null,
 codProfessor int not null,
 primary key (id),
-foreign key (nome) references aluno (nome),
-foreign key (CodigoDisci) references disciplina (CodigoDisci),
-foreign key (codProfessor) references professor (codProfessor)
+foreign key (CodigoDisci) references disciplina (CodigoDisci)
 ) engine = InnoDB; 
 
-insert into turma values (1,'80:00:00','Aline','001','11453');
-insert into turma values (2,'80:00:00','Maria','002','12345');
-insert into turma values (3,'70:00:00','Felipe','003','23049');
-insert into turma values (4,'70:00:00','Eduardo','004','35678');
-insert into turma values (5,'70:00:00','Gabriela','005','67890');
-insert into turma values (6,'80:00:00','Regina','001','11453');
-insert into turma values (7,'80:00:00','Caio','002','12345');
-insert into turma values (8,'70:00:00','Rebeca','003','23049');
-insert into turma values (9,'70:00:00','Heitor','004','35678');
-insert into turma values (10,'70:00:00','Julia','005','23049');
+insert into turma values (1,'80:00:00','Aline','001',1),
+(2,'80:00:00','Maria','002', 2),
+(3,'70:00:00','Felipe','003', 3),
+(4,'70:00:00','Eduardo','004', 4),
+(5,'70:00:00','Gabriela','005', 5),
+(6,'80:00:00','Regina','001', 1),
+(7,'80:00:00','Caio','002', 2),
+(8,'70:00:00','Rebeca','003', 3),
+(9,'70:00:00','Heitor','004', 4),
+(10,'70:00:00','Julia','005', 5);
 select *from turma;
 
 set delimiter $$
@@ -82,4 +82,6 @@ BEGIN
     SET NEW.DataContratacao = CURDATE();
 END $$
 
-SET DELIMITER ;
+insert into professor (nome, CodigoDisci, nome_disci) values
+('Carlos', '001', 'Microbiologia');
+select*from professor;
