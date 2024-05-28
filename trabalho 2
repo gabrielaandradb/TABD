@@ -85,3 +85,43 @@ END $$
 insert into professor (nome, CodigoDisci, nome_disci) values
 ('Carlos', '001', 'Microbiologia');
 select*from professor;
+
+
+-- inserir novo aluno
+DELIMITER $$
+CREATE PROCEDURE AddAluno(
+    IN nomeAluno VARCHAR(45),
+    IN dataNascimentoAluno VARCHAR(10)
+)
+BEGIN
+    INSERT INTO aluno (nome, DataNascimento) 
+    VALUES (nomeAluno, dataNascimentoAluno);
+END$$
+
+DELIMITER ;
+CALL AddAluno('João', '15-03-2003');
+
+
+-- retorna todos os alunos matriculados em uma determinada disciplina:
+
+DELIMITER $$
+CREATE PROCEDURE GetAlunosByDisciplina(
+    IN codigoDisci INT
+)
+BEGIN
+    SELECT a.cod, a.nome, a.DataNascimento
+    FROM aluno a
+    JOIN turma t ON a.nome = t.nome
+    WHERE t.CodigoDisci = codigoDisci;
+END$$
+
+DELIMITER ;
+
+-- Essa stored procedure, GetAlunosByDisciplina, aceita um parâmetro codigoDisci 
+-- e retorna todos os alunos matriculados na disciplina especificada.
+
+-- Para chamar essa stored procedure e obter todos os alunos matriculados 
+-- em uma disciplina com o código 001 (Microbiologia), você pode usar o seguinte comando:
+
+CALL GetAlunosByDisciplina(001);
+-- Isso irá retornar uma lista de alunos matriculados na disciplina de código 001.
