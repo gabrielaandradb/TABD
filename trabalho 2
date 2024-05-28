@@ -1,23 +1,25 @@
+drop database instituicao;
 create schema if not exists instituicao default character set utf8;
 use instituicao;
 
 CREATE TABLE IF NOT EXISTS aluno (
     cod int not null auto_increment,
     nome VARCHAR(45) NULL,
-    DataNascimento varchar (10),
+    DataNascimento date,
     PRIMARY KEY (cod)
 )  ENGINE=INNODB;
+
 insert into aluno (nome, DataNascimento) values
-('Aline', '05-02-1990'),
-('Maria', '10-06-1995'),
-('Felipe', '23-12-2001'),
-('Eduardo', '11-08-2000'),
-('Gabriela', '22-02-2005'),
-('Regina', '30-02-2011'),
-('Caio', '05-05-2000'),
-('Rebeca', '14-05-1993'),
-('Heitor', '14-12-2002'),
-('Julia', '20-09-2000');
+('Aline', '1990-02-05'),
+('Maria', '1995-06-10'),
+('Felipe', '2001-12-23'),
+('Eduardo', '2000-08-11'),
+('Gabriela', '2005-02-22'),
+('Regina', '2001-02-28'),
+('Caio', '2000-05-05'),
+('Rebeca', '1998-05-14'),
+('Heitor', '2002-12-14'),
+('Julia', '2000-09-20');
 select * from aluno;
 
 CREATE TABLE IF NOT EXISTS disciplina (
@@ -34,24 +36,24 @@ insert into disciplina (CodigoDisci, nome_disci) values
 ('005','Imunologia');
 select * from disciplina;
 
-create table if not exists professor ( 
+CREATE TABLE IF NOT EXISTS professor ( 
 codProfessor int not null auto_increment, 
 nome varchar (45) not null, 
 CodigoDisci int not null,
-DataContratacao varchar (10), 
+DataContratacao date, 
 nome_disci varchar (45),
 primary key (codProfessor),
 foreign key (CodigoDisci) references disciplina (CodigoDisci)
 ) engine = InnoDB;
 
-insert into professor values (null,'Carlos','001','03-08-2007','Microbiologia');
-insert into professor values (null,'Rosane','002','07-06-2010','Química');
-insert into professor values (null,'José','003','17-08-2015','Anatomia');
-insert into professor values (null,'Marta','004','14-03-2020','Histologia');
-insert into professor values (null,'Paulo','005','20-04-2013','Imunologia');
+insert into professor values (null,'Carlos','001','2017-08-03','Microbiologia'),
+(null,'Rosane','002','2010-06-07','Química'),
+(null,'José','003','2015-08-17','Anatomia'),
+(null,'Marta','004','2020-03-14','Histologia'),
+(null,'Paulo','005','2013-04-20','Imunologia');
 select * from professor;
 
-create table if not exists turma (
+CREATE TABLE IF NOT EXISTS turma (
 id int not null,
 horas time,
 nome varchar (45),
@@ -73,55 +75,34 @@ insert into turma values (1,'80:00:00','Aline','001',1),
 (10,'70:00:00','Julia','005', 5);
 select *from turma;
 
-set delimiter $$
 
+-- atualizar data da contratação
+SET DELIMITER $$
 CREATE TRIGGER atualizar_contratacao
 BEFORE INSERT ON professor
 FOR EACH ROW
 BEGIN
     SET NEW.DataContratacao = CURDATE();
 END $$
+set delimiter ;
 
 insert into professor (nome, CodigoDisci, nome_disci) values
 ('Carlos', '001', 'Microbiologia');
 select*from professor;
-
-
--- inserir novo aluno
-DELIMITER $$
-CREATE PROCEDURE AddAluno(
-    IN nomeAluno VARCHAR(45),
-    IN dataNascimentoAluno VARCHAR(10)
-)
-BEGIN
-    INSERT INTO aluno (nome, DataNascimento) 
-    VALUES (nomeAluno, dataNascimentoAluno);
-END$$
-
-DELIMITER ;
-CALL AddAluno('João', '15-03-2003');
-
+show triggers;
 
 -- retorna todos os alunos matriculados em uma determinada disciplina:
 
 DELIMITER $$
-CREATE PROCEDURE GetAlunosByDisciplina(
-    IN codigoDisci INT
+CREATE PROCEDURE alunosDisciplina(
+    IN codigoDisci int  -- entrar com codigoDisci
 )
 BEGIN
     SELECT a.cod, a.nome, a.DataNascimento
     FROM aluno a
-    JOIN turma t ON a.nome = t.nome
+    JOIN turma t on a.nome = t.nome
     WHERE t.CodigoDisci = codigoDisci;
 END$$
+delimiter ;
 
-DELIMITER ;
-
--- Essa stored procedure, GetAlunosByDisciplina, aceita um parâmetro codigoDisci 
--- e retorna todos os alunos matriculados na disciplina especificada.
-
--- Para chamar essa stored procedure e obter todos os alunos matriculados 
--- em uma disciplina com o código 001 (Microbiologia), você pode usar o seguinte comando:
-
-CALL GetAlunosByDisciplina(001);
--- Isso irá retornar uma lista de alunos matriculados na disciplina de código 001.
+call alunosDisciplina(001);
