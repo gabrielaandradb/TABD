@@ -106,3 +106,27 @@ END$$
 delimiter ;
 
 call alunosDisciplina(001);
+
+
+-- retorna as idades dos alunos matriculados em uma disciplina específica. 
+DELIMITER $$
+CREATE FUNCTION idadeAlunos(codigoDisciplina INT) 
+RETURNS TEXT
+DETERMINISTIC
+BEGIN
+    DECLARE mostrarIdades TEXT;
+
+    SELECT GROUP_CONCAT(
+        CONCAT(a.nome,'- ', YEAR(CURDATE())- YEAR(a.DataNascimento), ' anos') 
+        SEPARATOR ', '
+    )INTO mostrarIdades
+    FROM aluno a
+    JOIN turma t ON a.nome = t.nome
+    WHERE t.CodigoDisci = codigoDisciplina
+    ORDER BY a.nome;
+
+    RETURN mostrarIdades;
+END$$
+DELIMITER ;
+SELECT idadeAlunos('002');
+
